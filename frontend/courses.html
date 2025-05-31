@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Courses - Personalized LMS</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="container">
+          <a href="index.html" class="navbar-brand">AI-LMS</a>
+          <ul class="navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="courses.html" class="active">Courses</a></li>
+            <li>
+              <a
+                href="dashboard.html"
+                id="auth-link-dashboard"
+                style="display: none"
+                >Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="login.html" id="auth-link-login" style="display: none"
+                >Login</a
+              >
+            </li>
+            <li>
+              <a
+                href="register.html"
+                id="auth-link-register"
+                style="display: none"
+                >Register</a
+              >
+            </li>
+            <li>
+              <a href="#" id="auth-link-logout" style="display: none">Logout</a>
+            </li>
+            <li>
+              <a
+                href="profile.html"
+                id="auth-link-profile"
+                style="display: none"
+                >Profile</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="all-courses-section">
+        <div class="container">
+          <h2>Explore Our Courses</h2>
+          <div class="course-filters">
+            <!-- Placeholder for filter options -->
+            <input
+              type="text"
+              id="search-course"
+              placeholder="Search for courses..."
+            />
+            <select id="category-filter">
+              <option value="">All Categories</option>
+              <option value="tech">Technology</option>
+              <option value="business">Business</option>
+              <option value="art">Art & Design</option>
+              <option value="science">Science</option>
+            </select>
+            <button class="btn btn-secondary" id="apply-filters-btn">
+              Apply Filters
+            </button>
+          </div>
+
+          <div class="course-grid" id="all-courses-grid">
+            <!-- Course cards will be dynamically inserted here -->
+            <div class="course-card-placeholder">
+              <img src="images/course-placeholder.png" alt="Course Image" />
+              <h3>Loading Courses...</h3>
+              <p>Please wait while we fetch the available courses.</p>
+            </div>
+          </div>
+          <div class="pagination">
+            <!-- Pagination controls will go here -->
+            <button class="btn btn-secondary" disabled>Previous</button>
+            <span>Page 1 of X</span>
+            <button class="btn btn-secondary">Next</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 AI-Powered LMS. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const coursesGrid = document.getElementById("all-courses-grid");
+        const API_BASE_URL = "http://localhost:5000/api";
+
+        // Update nav (from global script.js)
+        if (typeof updateNav === "function") {
+          updateNav();
+        }
+
+        async function fetchAllCourses() {
+          if (!coursesGrid) return;
+          coursesGrid.innerHTML =
+            '<div class="course-card-placeholder"><h3>Loading courses...</h3></div>'; // Clear and show loading
+
+          // Helper function to generate more diverse quiz questions
+          function generateQuizzes(courseTitlePrefix, baseQuestions) {
+            const quizzes = [];
+            for (let i = 0; i < 25; i++) {
+              const baseQuestionData = baseQuestions[i % baseQuestions.length]; // Cycle through base questions
+              quizzes.push({
+                question: `${courseTitlePrefix} Quiz ${i + 1}: ${
+                  baseQuestionData.question
+                } (Variant ${Math.floor(i / baseQuestions.length) + 1})`,
+                options: [...baseQuestionData.options].sort(
+                  () => Math.random() - 0.5
+                ), // Shuffle options
+                correctAnswerIndex: baseQuestionData.options.indexOf(
+                  baseQuestionData.options[baseQuestionData.correctAnswerIndex]
+                ), // Find new index of correct answer
+              });
+            }
+            return quizzes;
+          }
+
+          // Base question templates
+          const jsBaseQuestions = [
+            {
+              question: "What is a closure in JavaScript?",
+              options: [
+                "A function with access to its outer scope",
+                "A way to close a browser window",
+                "A type of variable",
+                "A CSS selector",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "Which keyword declares a block-scoped variable?",
+              options: ["let", "var", "const", "function"],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does `===` operator check for?",
+              options: [
+                "Value and type equality",
+                "Value equality only",
+                "Type equality only",
+                "Assignment",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "How do you write a single-line comment in JS?",
+              options: [
+                "// comment",
+                "/* comment */",
+                "<!-- comment -->",
+                "# comment",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is the purpose of `Array.prototype.map()`?",
+              options: [
+                "Creates a new array by calling a function on every element",
+                "Modifies the original array",
+                "Filters an array",
+                "Reduces an array to a single value",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const marketingBaseQuestions = [
+            {
+              question: "What is A/B testing in marketing?",
+              options: [
+                "Comparing two versions of a webpage/ad to see which performs better",
+                "Testing all marketing channels",
+                "A type of survey",
+                "Analyzing competitor ads",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does 'conversion rate' mean?",
+              options: [
+                "Percentage of visitors who complete a desired action",
+                "Number of website clicks",
+                "Social media likes",
+                "Email open rate",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'Call to Action' (CTA)?",
+              options: [
+                "An instruction to provoke an immediate response",
+                "A marketing slogan",
+                "A brand logo",
+                "A customer review",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "Which of these is a key component of SEO?",
+              options: [
+                "Keyword research",
+                "Paid advertising budget",
+                "Graphic design quality",
+                "Number of social media followers",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'email marketing'?",
+              options: [
+                "Sending commercial messages to a group of people using email",
+                "Spamming inboxes",
+                "Social media advertising",
+                "Content creation for blogs",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const designBaseQuestions = [
+            {
+              question: "What is the 'Rule of Thirds' in composition?",
+              options: [
+                "A guideline for placing elements off-center",
+                "A color theory principle",
+                "A typography rule",
+                "A printing technique",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does CMYK stand for in color models?",
+              options: [
+                "Cyan, Magenta, Yellow, Key (Black)",
+                "Red, Green, Blue, Key",
+                "Color, Mode, Yield, Kit",
+                "Contrast, Mix, Yell, Know",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'mood board' used for in design?",
+              options: [
+                "A visual tool to explore and communicate design ideas",
+                "A type of software",
+                "A list of design rules",
+                "A client contract",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "Which file format is best for logos and icons that need to scale?",
+              options: ["SVG", "JPG", "PNG", "GIF"],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'hierarchy' in visual design?",
+              options: [
+                "Arrangement of elements to show order of importance",
+                "Using only one font",
+                "A specific color palette",
+                "The software version",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const physicsBaseQuestions = [
+            {
+              question: "What is the SI unit of electric current?",
+              options: ["Ampere", "Volt", "Ohm", "Watt"],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'kinetic energy'?",
+              options: [
+                "Energy of motion",
+                "Stored energy",
+                "Energy from heat",
+                "Energy from light",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "Which of these is a fundamental force of nature?",
+              options: [
+                "Strong Nuclear Force",
+                "Friction",
+                "Tension",
+                "Air Resistance",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does a 'prism' do to white light?",
+              options: [
+                "Separates it into its constituent colors (spectrum)",
+                "Makes it brighter",
+                "Blocks it completely",
+                "Changes its speed",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'absolute zero' in Kelvin?",
+              options: ["0 K", "-273.15 K", "273.15 K", "100 K"],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const pythonBaseQuestions = [
+            {
+              question: "What is a 'dictionary' in Python?",
+              options: [
+                "An unordered collection of key-value pairs",
+                "An ordered sequence of items",
+                "A fixed-size array",
+                "A type of number",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "How do you start a 'for' loop in Python?",
+              options: [
+                "for item in iterable:",
+                "loop item through iterable:",
+                "foreach item in iterable:",
+                "iterate item in iterable:",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is the output of `print(type(True))`?",
+              options: [
+                "<class 'bool'>",
+                "<class 'int'>",
+                "<class 'str'>",
+                "True",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "Which library is commonly used for numerical operations in Python?",
+              options: ["NumPy", "Pandas", "Matplotlib", "Requests"],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "How do you handle exceptions in Python?",
+              options: [
+                "try-except block",
+                "if-else block",
+                "switch-case block",
+                "do-while block",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const aiBaseQuestions = [
+            {
+              question: "What is 'Deep Learning' a subfield of?",
+              options: [
+                "Machine Learning",
+                "Data Mining",
+                "Robotics",
+                "Cybersecurity",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'training data' in machine learning?",
+              options: [
+                "Data used to train a model",
+                "Data used to test a model",
+                "The model itself",
+                "The algorithm used",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does 'overfitting' mean in ML?",
+              options: [
+                "Model performs well on training data but poorly on new data",
+                "Model performs poorly on training data",
+                "Model is too simple",
+                "Model has too few features",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "Which of these is a common task for NLP?",
+              options: [
+                "Sentiment analysis",
+                "Image recognition",
+                "Stock price prediction",
+                "Game playing AI",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'Reinforcement Learning'?",
+              options: [
+                "Learning through trial and error with rewards/penalties",
+                "Learning from labeled data",
+                "Learning from unlabeled data",
+                "Learning by mimicking human experts",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const writingBaseQuestions = [
+            {
+              question: "What is an 'antagonist' in a story?",
+              options: [
+                "A character or force opposing the protagonist",
+                "The main character",
+                "A neutral character",
+                "The narrator",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'show, don't tell' in writing?",
+              options: [
+                "Using actions and descriptions instead of direct statements",
+                "Telling the reader everything explicitly",
+                "A type of dialogue tag",
+                "A rule for poetry",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'climax' in a plot?",
+              options: [
+                "The point of highest tension or turning point",
+                "The beginning of the story",
+                "The resolution",
+                "A minor event",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'alliteration'?",
+              options: [
+                "Repetition of the same sound at the beginning of words",
+                "A comparison using 'like' or 'as'",
+                "An exaggeration for effect",
+                "A type of rhyme",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'theme' in literature?",
+              options: [
+                "The underlying message or main idea",
+                "The plot summary",
+                "The list of characters",
+                "The setting of the story",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const financeBaseQuestions = [
+            {
+              question: "What is 'inflation'?",
+              options: [
+                "The rate at which the general level of prices for goods and services is rising",
+                "A decrease in prices",
+                "The stock market index",
+                "A type of investment",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'liability'?",
+              options: [
+                "A debt or financial obligation",
+                "An asset owned",
+                "Income received",
+                "A type of insurance",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does ROI stand for?",
+              options: [
+                "Return on Investment",
+                "Rate of Inflation",
+                "Risk of Insolvency",
+                "Revenue Over Income",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'credit score'?",
+              options: [
+                "A number representing a person's creditworthiness",
+                "The amount of credit available on a card",
+                "A bank account balance",
+                "A type of loan",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'mutual fund'?",
+              options: [
+                "An investment vehicle made up of a pool of money from many investors",
+                "A single stock",
+                "A government bond",
+                "A savings account",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const quantumBaseQuestions = [
+            {
+              question:
+                "What is a 'quantum gate' analogous to in classical computing?",
+              options: ["Logic gate", "CPU", "RAM", "Hard drive"],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "Which of these is a potential challenge for building quantum computers?",
+              options: [
+                "Decoherence",
+                "Lack of algorithms",
+                "Slow processing speed (classical)",
+                "High power consumption (classical)",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "Shor's algorithm, a quantum algorithm, is famous for its ability to efficiently factor what?",
+              options: [
+                "Large integers",
+                "Polynomials",
+                "Matrices",
+                "Prime numbers (finding)",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "What is the 'measurement problem' in quantum mechanics?",
+              options: [
+                "The act of measuring a quantum system collapses its superposition",
+                "Difficulty in measuring small particles",
+                "Inaccurate measurement tools",
+                "The high cost of quantum measurement devices",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "Which programming language is often used for quantum computing SDKs (e.g., Qiskit)?",
+              options: ["Python", "C++", "Java", "Fortran"],
+              correctAnswerIndex: 0,
+            },
+          ];
+          const webdevBaseQuestions = [
+            {
+              question: "What is the DOM in web development?",
+              options: [
+                "Document Object Model - a programming interface for HTML/XML documents",
+                "Data Object Model",
+                "Direct Object Manipulation",
+                "Document Order Marker",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is 'AJAX' used for?",
+              options: [
+                "Making asynchronous requests to a server without reloading the page",
+                "Styling web pages",
+                "Defining page structure",
+                "A type of web server",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question:
+                "Which HTTP method is typically used to request data from a server?",
+              options: ["GET", "POST", "PUT", "DELETE"],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What is a 'cookie' in web terms?",
+              options: [
+                "Small piece of data stored by the browser",
+                "A type of JavaScript function",
+                "A CSS style",
+                "A server-side script",
+              ],
+              correctAnswerIndex: 0,
+            },
+            {
+              question: "What does 'URL' stand for?",
+              options: [
+                "Uniform Resource Locator",
+                "Universal Request Language",
+                "Uniform Routing Link",
+                "Universal Resource Linker",
+              ],
+              correctAnswerIndex: 0,
+            },
+          ];
+
+          const fetchedCourses = [
+            {
+              id: 1,
+              title: "Advanced JavaScript",
+              description: "Deep dive into modern JavaScript features.",
+              image: "images/js-advanced.png",
+              instructor: "JS Ninja",
+              category: "tech",
+              youtubeLink: "https://www.youtube.com/embed/somelink1",
+              importantThings: [
+                "Understanding closures and scope.",
+                "Mastering asynchronous JavaScript (Promises, async/await).",
+                "Exploring ES6+ features.",
+              ],
+              quizzes: generateQuizzes("JS", jsBaseQuestions),
+            },
+            {
+              id: 2,
+              title: "Digital Marketing 101",
+              description: "Fundamentals of online marketing strategies.",
+              image: "images/digital-marketing.png",
+              instructor: "Market Pro",
+              category: "business",
+              youtubeLink: "https://www.youtube.com/embed/somelink2",
+              importantThings: [
+                "SEO basics.",
+                "Content marketing strategies.",
+                "Social media marketing.",
+              ],
+              quizzes: generateQuizzes("Marketing", marketingBaseQuestions),
+            },
+            {
+              id: 3,
+              title: "Introduction to Graphic Design",
+              description: "Learn the basics of visual communication.",
+              image: "images/graphic-design.png",
+              instructor: "Creative Eye",
+              category: "art",
+              youtubeLink: "https://www.youtube.com/embed/somelink3",
+              importantThings: [
+                "Color theory.",
+                "Typography fundamentals.",
+                "Layout principles.",
+              ],
+              quizzes: generateQuizzes("Design", designBaseQuestions),
+            },
+            {
+              id: 4,
+              title: "Physics for Everyone",
+              description: "Understand the fundamental laws of the universe.",
+              image: "images/physics.png",
+              instructor: "Cosmic Ray",
+              category: "science",
+              youtubeLink: "https://www.youtube.com/embed/somelink4",
+              importantThings: [
+                "Newton's Laws of Motion.",
+                "Basics of thermodynamics.",
+                "Introduction to relativity.",
+              ],
+              quizzes: generateQuizzes("Physics", physicsBaseQuestions),
+            },
+            {
+              id: 5,
+              title: "Python for Data Analysis",
+              description: "Use Python for data manipulation and analysis.",
+              image: "images/python-data.png",
+              instructor: "Data Wiz",
+              category: "tech",
+              youtubeLink: "https://www.youtube.com/embed/somelink5",
+              importantThings: [
+                "Pandas DataFrames.",
+                "NumPy arrays.",
+                "Data visualization with Matplotlib/Seaborn.",
+              ],
+              quizzes: generateQuizzes("Python", pythonBaseQuestions),
+            },
+            {
+              id: 6,
+              title: "Introduction to AI",
+              description: "Explore the basics of Artificial Intelligence.",
+              image: "images/ai-intro.png",
+              instructor: "AI Pioneer",
+              category: "tech",
+              youtubeLink: "https://www.youtube.com/embed/somelink6",
+              importantThings: [
+                "Types of AI.",
+                "Machine Learning basics.",
+                "Neural Networks overview.",
+              ],
+              quizzes: generateQuizzes("AI", aiBaseQuestions),
+            },
+            {
+              id: 7,
+              title: "Creative Writing Workshop",
+              description: "Unleash your inner storyteller.",
+              image: "images/creative-writing.png",
+              instructor: "Word Smith",
+              category: "art",
+              youtubeLink: "https://www.youtube.com/embed/somelink7",
+              importantThings: [
+                "Character development.",
+                "Plot construction.",
+                "Finding your voice.",
+              ],
+              quizzes: generateQuizzes("Writing", writingBaseQuestions),
+            },
+            {
+              id: 8,
+              title: "Financial Planning Basics",
+              description: "Manage your finances effectively.",
+              image: "images/finance-basics.png",
+              instructor: "Money Maven",
+              category: "business",
+              youtubeLink: "https://www.youtube.com/embed/somelink8",
+              importantThings: [
+                "Budgeting techniques.",
+                "Introduction to investing.",
+                "Saving strategies.",
+              ],
+              quizzes: generateQuizzes("Finance", financeBaseQuestions),
+            },
+            {
+              id: 9,
+              title: "Introduction to Quantum Computing",
+              description: "Explore the next frontier of computation.",
+              image: "images/quantum-computing.png",
+              instructor: "Quantum Leap",
+              category: "science",
+              youtubeLink: "https://www.youtube.com/embed/somelink9",
+              importantThings: [
+                "Qubits vs bits.",
+                "Superposition and Entanglement.",
+                "Potential applications.",
+              ],
+              quizzes: generateQuizzes("Quantum", quantumBaseQuestions),
+            },
+            {
+              id: 10,
+              title: "Web Development Bootcamp",
+              description: "Become a full-stack web developer.",
+              image: "images/fd.jpg",
+              instructor: "Code Master",
+              category: "tech",
+              youtubeLink: "https://www.youtube.com/embed/ZxKM3DCV2kE",
+              importantThings: [
+                "HTML, CSS, JavaScript.",
+                "Backend frameworks (e.g., Node.js/Express).",
+                "Database fundamentals.",
+              ],
+              quizzes: generateQuizzes("WebDev", webdevBaseQuestions),
+            },
+          ];
+
+          renderCourses(fetchedCourses);
+
+          // Store courses in localStorage to be accessible by course_view.html
+          localStorage.setItem(
+            "allLMSCoursedata",
+            JSON.stringify(fetchedCourses)
+          );
+
+          // TODO: Implement actual API call
+          // try {
+          //     const response = await fetch(`${API_BASE_URL}/courses`); // Assuming an endpoint for all courses
+          //     if (!response.ok) {
+          //         throw new Error(`HTTP error! status: ${response.status}`);
+          //     }
+          //     const courses = await response.json();
+          //     renderCourses(courses.data || courses); // Adjust based on API response structure
+          // } catch (error) {
+          //     console.error("Failed to fetch courses:", error);
+          //     if (coursesGrid) {
+          //         coursesGrid.innerHTML = '<p class="error-message">Could not load courses. Please try again later.</p>';
+          //     }
+          // }
+        }
+
+        function renderCourses(courses) {
+          if (!coursesGrid) return;
+          coursesGrid.innerHTML = ""; // Clear placeholder or old content
+
+          if (!courses || courses.length === 0) {
+            coursesGrid.innerHTML =
+              "<p>No courses found matching your criteria. Try broadening your search!</p>";
+            return;
+          }
+
+          courses.forEach((course) => {
+            const courseCard = `
+                        <div class="course-card">
+                            <img src="${
+                              course.image || "images/course-placeholder.png"
+                            }" alt="${course.title}">
+                            <h3>${course.title}</h3>
+                            <p>${(
+                              course.description || "No description available."
+                            ).substring(0, 100)}...</p>
+                            <p><em>Category: ${
+                              course.category || "General"
+                            }</em></p>
+                            <a href="course_view.html?id=${
+                              course.id
+                            }" class="btn btn-primary">View Details</a>
+                        </div>
+                    `;
+            coursesGrid.insertAdjacentHTML("beforeend", courseCard);
+          });
+        }
+
+        // TODO: Add event listeners for search and filter functionality
+        // const searchInput = document.getElementById('search-course');
+        // const categoryFilter = document.getElementById('category-filter');
+        // const applyFiltersBtn = document.getElementById('apply-filters-btn');
+        // if(applyFiltersBtn) applyFiltersBtn.addEventListener('click', fetchAllCourses);
+
+        fetchAllCourses();
+      });
+    </script>
+  </body>
+</html>

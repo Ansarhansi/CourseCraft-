@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - Personalized LMS</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="container">
+          <a href="index.html" class="navbar-brand">AI-LMS</a>
+          <ul class="navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li>
+              <a
+                href="dashboard.html"
+                id="auth-link-dashboard"
+                style="display: none"
+                >Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="login.html" id="auth-link-login" style="display: none"
+                >Login</a
+              >
+            </li>
+            <li>
+              <a
+                href="register.html"
+                id="auth-link-register"
+                style="display: none"
+                >Register</a
+              >
+            </li>
+            <li>
+              <a href="#" id="auth-link-logout" style="display: none">Logout</a>
+            </li>
+            <li>
+              <a
+                href="profile.html"
+                id="auth-link-profile"
+                style="display: none"
+                >Profile</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="profile-section">
+        <div class="container form-container">
+          <h2>My Profile</h2>
+          <form id="profile-form">
+            <div
+              id="profile-message"
+              class="message"
+              style="display: none"
+            ></div>
+
+            <div class="form-group">
+              <label for="profile-username">Username</label>
+              <input
+                type="text"
+                id="profile-username"
+                name="username"
+                readonly
+              />
+              <small>Username cannot be changed.</small>
+            </div>
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input type="email" id="profile-email" name="email" required />
+            </div>
+            <div class="form-group">
+              <label for="profile-firstName">First Name</label>
+              <input type="text" id="profile-firstName" name="firstName" />
+            </div>
+            <div class="form-group">
+              <label for="profile-lastName">Last Name</label>
+              <input type="text" id="profile-lastName" name="lastName" />
+            </div>
+
+            <hr style="margin: 20px 0" />
+            <h4>Change Password (Optional)</h4>
+            <div class="form-group">
+              <label for="profile-current-password">Current Password</label>
+              <input
+                type="password"
+                id="profile-current-password"
+                name="currentPassword"
+              />
+            </div>
+            <div class="form-group">
+              <label for="profile-new-password">New Password</label>
+              <input
+                type="password"
+                id="profile-new-password"
+                name="newPassword"
+                minlength="6"
+              />
+            </div>
+            <div class="form-group">
+              <label for="profile-confirm-new-password"
+                >Confirm New Password</label
+              >
+              <input
+                type="password"
+                id="profile-confirm-new-password"
+                name="confirmNewPassword"
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%">
+              Update Profile
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 AI-Powered LMS. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const profileForm = document.getElementById("profile-form");
+        const messageDiv = document.getElementById("profile-message");
+        const API_BASE_URL = "http://localhost:5000/api";
+
+        const usernameInput = document.getElementById("profile-username");
+        const emailInput = document.getElementById("profile-email");
+        const firstNameInput = document.getElementById("profile-firstName");
+        const lastNameInput = document.getElementById("profile-lastName");
+
+        // Check authentication
+        const token = localStorage.getItem("authToken");
+        const user = JSON.parse(localStorage.getItem("authUser"));
+
+        if (!token || !user) {
+          window.location.href = "login.html"; // Redirect if not logged in
+          return;
+        }
+
+        // Update nav (from global script.js)
+        if (typeof updateNav === "function") {
+          updateNav();
+        }
+
+        // Populate form with user data
+        if (user) {
+          usernameInput.value = user.username || "";
+          emailInput.value = user.email || "";
+          // Assuming first_name and last_name might not be in the initial authUser object from login
+          // These would ideally be fetched from a dedicated /api/profile endpoint
+          // For now, let's assume they might be part of 'user' or we fetch them.
+          // Placeholder:
+          // firstNameInput.value = user.first_name || '';
+          // lastNameInput.value = user.last_name || '';
+          // Let's fetch full profile data
+          fetchUserProfile();
+        }
+
+        async function fetchUserProfile() {
+          try {
+            // const response = await fetch(`${API_BASE_URL}/profile`, { // Assuming a /profile GET endpoint
+            //     headers: { 'Authorization': `Bearer ${token}` }
+            // });
+            // if (!response.ok) throw new Error('Failed to fetch profile data');
+            // const profileData = await response.json();
+
+            // For now, using localStorage data, extend if backend provides more
+            const currentUser = JSON.parse(localStorage.getItem("authUser"));
+            if (currentUser) {
+              firstNameInput.value = currentUser.first_name || ""; // Assuming these might be added
+              lastNameInput.value = currentUser.last_name || "";
+            }
+          } catch (error) {
+            console.error("Error fetching profile:", error);
+            messageDiv.textContent = "Could not load profile data.";
+            messageDiv.className = "message error";
+            messageDiv.style.display = "block";
+          }
+        }
+
+        if (profileForm) {
+          profileForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            messageDiv.style.display = "none";
+            messageDiv.className = "message";
+
+            const newEmail = emailInput.value;
+            const newFirstName = firstNameInput.value;
+            const newLastName = lastNameInput.value;
+            const currentPassword = document.getElementById(
+              "profile-current-password"
+            ).value;
+            const newPassword = document.getElementById(
+              "profile-new-password"
+            ).value;
+            const confirmNewPassword = document.getElementById(
+              "profile-confirm-new-password"
+            ).value;
+
+            let payload = {
+              email: newEmail,
+              first_name: newFirstName,
+              last_name: newLastName,
+            };
+
+            if (newPassword) {
+              if (newPassword.length < 6) {
+                messageDiv.textContent =
+                  "New password must be at least 6 characters long.";
+                messageDiv.className = "message error";
+                messageDiv.style.display = "block";
+                return;
+              }
+              if (newPassword !== confirmNewPassword) {
+                messageDiv.textContent = "New passwords do not match.";
+                messageDiv.className = "message error";
+                messageDiv.style.display = "block";
+                return;
+              }
+              if (!currentPassword) {
+                messageDiv.textContent =
+                  "Current password is required to change password.";
+                messageDiv.className = "message error";
+                messageDiv.style.display = "block";
+                return;
+              }
+              payload.current_password = currentPassword;
+              payload.new_password = newPassword;
+            }
+
+            try {
+              // Assuming an endpoint like /api/profile/update or /api/users/me
+              const response = await fetch(`${API_BASE_URL}/users/me/update`, {
+                // Placeholder endpoint
+                method: "PUT", // Or PATCH
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`, // Assuming JWT token is used
+                },
+                body: JSON.stringify(payload),
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                messageDiv.textContent =
+                  data.message || "Profile updated successfully!";
+                messageDiv.className = "message success";
+                // Update localStorage if user details changed (e.g., email)
+                const updatedUser = {
+                  ...user,
+                  email: newEmail,
+                  first_name: newFirstName,
+                  last_name: newLastName,
+                };
+                localStorage.setItem("authUser", JSON.stringify(updatedUser));
+                if (typeof updateNav === "function") updateNav(); // Refresh nav if username display changes
+
+                // Clear password fields
+                document.getElementById("profile-current-password").value = "";
+                document.getElementById("profile-new-password").value = "";
+                document.getElementById("profile-confirm-new-password").value =
+                  "";
+              } else {
+                messageDiv.textContent =
+                  data.message || "Failed to update profile.";
+                messageDiv.className = "message error";
+              }
+            } catch (error) {
+              console.error("Profile update error:", error);
+              messageDiv.textContent = "An error occurred. Please try again.";
+              messageDiv.className = "message error";
+            }
+            messageDiv.style.display = "block";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

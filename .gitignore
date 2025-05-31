@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.env
+env/
+venv/
+instance/ # Flask instance folder
+.DS_Store
+
+# Database
+*.sqlite3
+*.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Static files (if built by a process)
+# frontend/dist/
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+ehthumbs.db
+Thumbs.db
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Temporary files
+*.tmp
+*.bak

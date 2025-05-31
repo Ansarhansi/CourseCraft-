@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personalized LMS</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="container">
+          <a href="index.html" class="navbar-brand">AI-LMS</a>
+          <ul class="navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="login.html" id="auth-link-login">Login</a></li>
+            <li>
+              <a href="register.html" id="auth-link-register">Register</a>
+            </li>
+            <li>
+              <a href="#" id="auth-link-logout" style="display: none">Logout</a>
+            </li>
+            <li>
+              <a
+                href="profile.html"
+                id="auth-link-profile"
+                style="display: none"
+                >Profile</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container">
+          <h1>Welcome to Your Personalized Learning Journey</h1>
+          <p>
+            Discover courses tailored to your needs and achieve your learning
+            goals with our adaptive platform.
+          </p>
+          <a href="courses.html" class="btn btn-primary">Explore Courses</a>
+          <a href="register.html" class="btn btn-secondary">Get Started</a>
+        </div>
+      </section>
+
+      <section class="featured-courses">
+        <div class="container">
+          <h2>Featured Courses</h2>
+          <div class="course-grid" id="featured-courses-grid">
+            <!-- Course cards will be dynamically inserted here by script.js -->
+            <div class="course-card-placeholder">
+              <img src="images/course-placeholder.png" alt="Course Image" />
+              <h3>Loading Courses...</h3>
+              <p>Please wait while we fetch the latest courses for you.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="how-it-works">
+        <div class="container">
+          <h2>How It Works</h2>
+          <div class="steps">
+            <div class="step">
+              <div class="step-icon"><span>1</span></div>
+              <h3>Sign Up</h3>
+              <p>Create an account to get started.</p>
+            </div>
+            <div class="step">
+              <div class="step-icon"><span>2</span></div>
+              <h3>Personalize</h3>
+              <p>Tell us about your interests and goals.</p>
+            </div>
+            <div class="step">
+              <div class="step-icon"><span>3</span></div>
+              <h3>Learn</h3>
+              <p>Access adaptive content and track progress.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 AI-Powered LMS. All rights reserved.</p>
+        <p>
+          <a href="privacy.html">Privacy Policy</a> |
+          <a href="terms.html">Terms of Service</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>

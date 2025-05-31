@@ -1,0 +1,14 @@
+Flask>=2.0.0
+Flask-SQLAlchemy>=2.5.0
+Flask-Migrate>=4.1.0  # For database migrations
+Flask-Cors>=3.0.0     # For Cross-Origin Resource Sharing
+mysql-connector-python>=9.3.0 # For MySQL connection
+python-dotenv>=0.19.0 # For loading .env files
+Werkzeug>=2.0.0       # Often a dependency, good to specify
+gunicorn>=20.0.0      # For production deployment (optional for now)
+
+# Add other dependencies as needed:
+# Flask-JWT-Extended (for JWT authentication)
+# Flask-Bcrypt (alternative for password hashing)
+# requests (if making external API calls)
+# Pillow (for image processing if needed)

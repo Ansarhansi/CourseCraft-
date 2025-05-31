@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Personalized LMS</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="container">
+          <a href="index.html" class="navbar-brand">AI-LMS</a>
+          <ul class="navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li>
+              <a
+                href="dashboard.html"
+                id="auth-link-dashboard"
+                style="display: none"
+                >Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="login.html" id="auth-link-login" style="display: none"
+                >Login</a
+              >
+            </li>
+            <li>
+              <a
+                href="register.html"
+                id="auth-link-register"
+                style="display: none"
+                >Register</a
+              >
+            </li>
+            <li>
+              <a href="#" id="auth-link-logout" style="display: none">Logout</a>
+            </li>
+            <li>
+              <a
+                href="profile.html"
+                id="auth-link-profile"
+                style="display: none"
+                >Profile</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="dashboard-content">
+        <div class="container">
+          <h2 id="welcome-message">Welcome to your Dashboard!</h2>
+          <p>
+            This is where your personalized learning journey unfolds. You'll
+            find your enrolled courses, progress, recommendations, and more.
+          </p>
+
+          <div id="dashboard-overview">
+            <!-- Dynamic content will be loaded here -->
+            <h3>My Courses</h3>
+            <div id="my-courses-list" class="course-grid">
+              <p>Loading your courses...</p>
+              <!-- Example Course Card (to be dynamically generated)
+                        <div class="course-card">
+                            <img src="images/course-placeholder.png" alt="Course Title">
+                            <h3>Course Title</h3>
+                            <p>Brief description of the course.</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 60%;">60%</div>
+                            </div>
+                            <a href="course_view.html?id=1" class="btn btn-primary">Continue Learning</a>
+                        </div>
+                        -->
+            </div>
+
+            <h3>Recommended For You</h3>
+            <div id="recommended-courses-list" class="course-grid">
+              <p>Loading recommendations...</p>
+            </div>
+
+            <h3>My Achievements</h3>
+            <div id="achievements-list">
+              <p>No achievements unlocked yet. Keep learning!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 AI-Powered LMS. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const welcomeMessage = document.getElementById("welcome-message");
+        const myCoursesList = document.getElementById("my-courses-list");
+        const recommendedCoursesList = document.getElementById(
+          "recommended-courses-list"
+        );
+        const API_BASE_URL = "http://localhost:5000/api";
+
+        // Check authentication and update UI
+        const token = localStorage.getItem("authToken");
+        const user = JSON.parse(localStorage.getItem("authUser"));
+
+        if (!token || !user) {
+          // If not logged in, redirect to login page
+          window.location.href = "login.html";
+          return; // Stop further execution
+        }
+
+        // Update nav (from global script.js)
+        if (typeof updateNav === "function") {
+          updateNav(); // This will show Dashboard, Profile, Logout links
+        }
+
+        if (welcomeMessage && user) {
+          welcomeMessage.textContent = `Welcome to your Dashboard, ${user.username}!`;
+        }
+
+        // Placeholder function to fetch and display user's courses
+        async function fetchMyCourses() {
+          if (!myCoursesList) return;
+          // TODO: Replace with actual API call to get enrolled courses
+          // For now, using placeholder:
+          myCoursesList.innerHTML = `
+                    <div class="course-card">
+                        <img src="images/course-placeholder.png" alt="Sample Course">
+                        <h3>Sample Enrolled Course</h3>
+                        <p>Continue your learning journey with this interactive course.</p>
+                        <div class="progress-bar" style="background-color: #e0e0e0; border-radius: 5px; margin: 10px 0;">
+                             <div class="progress" style="width: 75%; background-color: #3498db; color: white; text-align: center; line-height: 20px; border-radius: 5px; height: 20px;">75%</div>
+                        </div>
+                        <a href="#" class="btn btn-primary">Resume Learning</a>
+                    </div>
+                    <p style="grid-column: 1 / -1; text-align: center;">More courses you're enrolled in will appear here.</p>
+                `;
+        }
+
+        // Placeholder function to fetch and display recommended courses
+        async function fetchRecommendedCourses() {
+          if (!recommendedCoursesList) return;
+          // TODO: Replace with actual API call for recommendations
+          recommendedCoursesList.innerHTML = `
+                    <div class="course-card">
+                        <img src="images/course-placeholder.png" alt="Recommended Course">
+                        <h3>AI for Beginners</h3>
+                        <p>A great starting point for understanding Artificial Intelligence.</p>
+                        <a href="#" class="btn btn-secondary">Learn More</a>
+                    </div>
+                     <p style="grid-column: 1 / -1; text-align: center;">Personalized recommendations will appear here.</p>
+                `;
+        }
+
+        fetchMyCourses();
+        fetchRecommendedCourses();
+      });
+    </script>
+  </body>
+</html>

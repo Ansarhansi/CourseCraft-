@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Details - Personalized LMS</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .course-header {
+        background-color: #3498db; /* Or a dynamic color based on course category */
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .course-header h1 {
+        color: white;
+        font-size: 2.5rem;
+      }
+      .course-header .instructor-info {
+        font-size: 1.1rem;
+        margin-top: 10px;
+      }
+      .course-content-layout {
+        display: flex;
+        gap: 30px;
+      }
+      .course-main-content {
+        flex: 3;
+      }
+      .course-sidebar {
+        flex: 1;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .course-sidebar h3 {
+        margin-top: 0;
+      }
+      .module-list {
+        list-style: none;
+        padding: 0;
+      }
+      .module-list li {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .module-list li:hover {
+        background-color: #e9e9e9;
+      }
+      .module-list li.active {
+        background-color: #3498db;
+        color: white;
+      }
+      .lesson-content {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        min-height: 200px; /* Placeholder for content */
+        background-color: #fff;
+      }
+      .enroll-button-container {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .youtube-video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+        background: #000;
+        margin-bottom: 20px;
+      }
+      .youtube-video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .important-things-list {
+        list-style: disc;
+        margin-left: 20px;
+      }
+      .quiz-section {
+        margin-top: 40px;
+        padding: 25px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .quiz-section h4 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+      }
+      .quiz-question {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #444;
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+      .quiz-options {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .quiz-options li {
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease,
+          transform 0.1s ease;
+        font-size: 1rem;
+      }
+      .quiz-options li:hover {
+        background-color: #e9e9e9;
+        border-color: #ccc;
+      }
+      .quiz-options li.selected-option {
+        background-color: #3498db;
+        color: white;
+        border-color: #2980b9;
+        font-weight: 500;
+        transform: scale(1.02);
+      }
+      .quiz-navigation {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .quiz-navigation .btn {
+        padding: 8px 18px;
+        font-size: 0.95rem;
+      }
+      .quiz-navigation span {
+        /* For the "X / Y" text */
+        font-size: 1rem;
+        color: #555;
+      }
+      #quiz-feedback {
+        font-size: 1rem;
+        font-weight: 500;
+        min-height: 24px; /* To prevent layout shift */
+      }
+      /* Styles for quiz results */
+      .quiz-section .btn-primary {
+        /* For Retake button */
+        margin-top: 15px;
+      }
+
+      /* Responsive adjustments for smaller screens */
+      @media (max-width: 768px) {
+        .course-content-layout {
+          flex-direction: column;
+        }
+        .course-main-content,
+        .course-sidebar {
+          flex: none;
+          width: 100%;
+        }
+        .quiz-section h4 {
+          font-size: 1.3rem;
+        }
+        .quiz-question {
+          font-size: 1.1rem;
+        }
+        .quiz-options li {
+          font-size: 0.95rem;
+          padding: 10px 12px;
+        }
+        .quiz-navigation {
+          flex-direction: column; /* Stack buttons on small screens */
+          gap: 10px; /* Add space between stacked buttons */
+        }
+        .quiz-navigation .btn {
+          width: 100%; /* Make buttons full width */
+        }
+        .quiz-navigation span {
+          margin-bottom: 10px; /* Space for the X/Y text */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="container">
+          <a href="index.html" class="navbar-brand">AI-LMS</a>
+          <ul class="navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li>
+              <a
+                href="dashboard.html"
+                id="auth-link-dashboard"
+                style="display: none"
+                >Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="login.html" id="auth-link-login" style="display: none"
+                >Login</a
+              >
+            </li>
+            <li>
+              <a
+                href="register.html"
+                id="auth-link-register"
+                style="display: none"
+                >Register</a
+              >
+            </li>
+            <li>
+              <a href="#" id="auth-link-logout" style="display: none">Logout</a>
+            </li>
+            <li>
+              <a
+                href="profile.html"
+                id="auth-link-profile"
+                style="display: none"
+                >Profile</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div id="course-details-content">
+        <!-- Content will be loaded by JavaScript -->
+        <div class="container">
+          <p style="text-align: center; padding: 50px">
+            Loading course details...
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 AI-Powered LMS. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const courseDetailsContent = document.getElementById(
+          "course-details-content"
+        );
+        const API_BASE_URL = "http://localhost:5000/api";
+
+        // Update nav (from global script.js)
+        if (typeof updateNav === "function") {
+          updateNav();
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get("id");
+
+        if (!courseId) {
+          courseDetailsContent.innerHTML =
+            '<div class="container"><p class="error-message" style="text-align:center; padding: 50px;">No course ID provided. Please select a course.</p></div>';
+          return;
+        }
+
+        let currentLoadedCourse = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        async function fetchCourseDetails(id) {
+          courseDetailsContent.innerHTML =
+            '<div class="container"><p style="text-align: center; padding: 50px;">Loading course details...</p></div>';
+          try {
+            const allCoursesString = localStorage.getItem("allLMSCoursedata");
+            if (!allCoursesString) {
+              throw new Error("Course data not found in local storage.");
+            }
+            const allCourses = JSON.parse(allCoursesString);
+            const numericCourseId = parseInt(id, 10);
+            const course = allCourses.find((c) => c.id === numericCourseId);
+
+            if (course) {
+              currentLoadedCourse = {
+                ...course,
+                fullDescription: course.fullDescription || course.description,
+              };
+              if (
+                currentLoadedCourse.quizzes &&
+                currentLoadedCourse.quizzes.length > 0
+              ) {
+                userAnswers = new Array(
+                  currentLoadedCourse.quizzes.length
+                ).fill(null);
+                currentQuestionIndex = 0;
+              }
+              renderCourseDetails(currentLoadedCourse);
+            } else {
+              throw new Error(`Course with ID ${id} not found.`);
+            }
+          } catch (error) {
+            console.error("Failed to fetch course details:", error);
+            courseDetailsContent.innerHTML = `<div class="container"><p class="error-message" style="text-align:center; padding: 50px;">Could not load course details. Error: ${error.message}</p></div>`;
+          }
+          // try {
+          //     const response = await fetch(`${API_BASE_URL}/courses/${id}`);
+          //     if (!response.ok) {
+          //         throw new Error(`HTTP error! status: ${response.status}`);
+          //     }
+          //     const courseData = await response.json();
+          //     renderCourseDetails(courseData);
+          // } catch (error) {
+          //     console.error("Failed to fetch course details:", error);
+          //     courseDetailsContent.innerHTML = `<div class="container"><p class="error-message" style="text-align:center; padding: 50px;">Could not load course details. Error: ${error.message}</p></div>`;
+          // }
+        }
+
+        function renderCourseDetails(course) {
+          document.title = `${course.title} - Personalized LMS`; // Update page title
+
+          let modulesHtml = "<p>No modules available for this course yet.</p>";
+          if (course.modules && course.modules.length > 0) {
+            modulesHtml = course.modules
+              .map(
+                (module) =>
+                  `<li data-module-id="${module.id}">${module.title}</li>`
+              )
+              .join("");
+          }
+
+          let importantThingsHtml =
+            "<p>No important topics listed for this course yet.</p>";
+          if (course.importantThings && course.importantThings.length > 0) {
+            importantThingsHtml =
+              `<ul class="important-things-list">` +
+              course.importantThings
+                .map((item) => `<li>${item}</li>`)
+                .join("") +
+              `</ul>`;
+          }
+
+          // Quiz HTML will be rendered by displayQuizQuestion function
+          const quizContainerHtml = `<div id="quiz-container-section" class="quiz-section"></div>`;
+
+          let youtubeEmbedHtml = "";
+          if (course.youtubeLink) {
+            youtubeEmbedHtml = `
+                <div class="youtube-video-container">
+                    <iframe
+                        src="${course.youtubeLink}"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>`;
+          }
+
+          const html = `
+                    <div class="course-header">
+                        <div class="container">
+                            <h1>${course.title}</h1>
+                            <p class="instructor-info">Taught by: ${
+                              course.instructor || "N/A"
+                            }</p>
+                        </div>
+                    </div>
+                    <div class="container course-content-layout">
+                        <div class="course-main-content">
+                            <h2>About this course</h2>
+                            <p>${
+                              course.fullDescription || // This was updated in fetchCourseDetails
+                              "Detailed description not available."
+                            }</p>
+
+                            ${youtubeEmbedHtml}
+
+                            <h3>Key Takeaways / Important Things</h3>
+                            ${importantThingsHtml}
+                            
+                            <div class="lesson-content" id="lesson-display-area">
+                                <p>Select a module from the sidebar to view its content (if available), or engage with the materials on this page.</p>
+                            </div>
+
+                            ${quizContainerHtml}
+
+                            <div class="enroll-button-container">
+                                <button class="btn btn-primary btn-lg">Enroll in this Course</button>
+                                <!-- Or "Go to Course" if already enrolled -->
+                            </div>
+                        </div>
+                        <aside class="course-sidebar">
+                            <h3>Course Modules</h3>
+                            <ul class="module-list" id="module-list-ul">
+                                ${modulesHtml}
+                            </ul>
+                            <h4>Progress</h4>
+                            <div class="progress-bar" style="background-color: #e0e0e0; border-radius: 5px; margin: 10px 0;">
+                                 <div class="progress" style="width: 0%; background-color: #3498db; color: white; text-align: center; line-height: 20px; border-radius: 5px; height: 20px;">0%</div>
+                            </div>
+                        </aside>
+                    </div>
+                `;
+          courseDetailsContent.innerHTML = html;
+
+          // Add event listeners to modules
+          const moduleItems = document.querySelectorAll("#module-list-ul li");
+          moduleItems.forEach((item) => {
+            item.addEventListener("click", () => {
+              moduleItems.forEach((i) => i.classList.remove("active"));
+              item.classList.add("active");
+              loadModuleContent(
+                item.dataset.moduleId,
+                currentLoadedCourse.title
+              );
+            });
+          });
+
+          // Initial call to render the quiz
+          if (
+            currentLoadedCourse &&
+            currentLoadedCourse.quizzes &&
+            currentLoadedCourse.quizzes.length > 0
+          ) {
+            displayQuizQuestion();
+          } else {
+            const quizContainer = document.getElementById(
+              "quiz-container-section"
+            );
+            if (quizContainer)
+              quizContainer.innerHTML =
+                "<p>No quizzes available for this course yet.</p>";
+          }
+        } // End of renderCourseDetails
+
+        function displayQuizQuestion() {
+          const quizContainer = document.getElementById(
+            "quiz-container-section"
+          );
+          if (
+            !quizContainer ||
+            !currentLoadedCourse ||
+            !currentLoadedCourse.quizzes ||
+            currentLoadedCourse.quizzes.length === 0
+          ) {
+            if (quizContainer)
+              quizContainer.innerHTML = "<p>Quiz not available.</p>";
+            return;
+          }
+
+          const quizItem = currentLoadedCourse.quizzes[currentQuestionIndex];
+          const totalQuestions = currentLoadedCourse.quizzes.length;
+
+          const optionsHtml = quizItem.options
+            .map(
+              (opt, index) =>
+                `<li data-index="${index}" class="${
+                  userAnswers[currentQuestionIndex] === index
+                    ? "selected-option"
+                    : ""
+                }">${opt}</li>`
+            )
+            .join("");
+
+          const quizHtml = `
+            <h4>Quiz Time! (${
+              currentQuestionIndex + 1
+            } / ${totalQuestions})</h4>
+            <p class="quiz-question">${currentQuestionIndex + 1}. ${
+            quizItem.question
+          }</p>
+            <ul class="quiz-options" id="current-quiz-options">
+                ${optionsHtml}
+            </ul>
+            <div class="quiz-navigation">
+                <button class="btn btn-secondary btn-sm" id="prev-quiz-btn" ${
+                  currentQuestionIndex === 0 ? "disabled" : ""
+                }>Previous</button>
+                <button class="btn btn-secondary btn-sm" id="next-quiz-btn">
+                    ${
+                      currentQuestionIndex === totalQuestions - 1
+                        ? "Finish Quiz"
+                        : "Next"
+                    }
+                </button>
+            </div>
+            <p id="quiz-feedback" style="margin-top:10px;"></p>
+          `;
+          quizContainer.innerHTML = quizHtml;
+
+          document
+            .getElementById("prev-quiz-btn")
+            .addEventListener("click", handlePrevQuestion);
+          document
+            .getElementById("next-quiz-btn")
+            .addEventListener("click", handleNextQuestion);
+
+          const currentOptions = document.querySelectorAll(
+            "#current-quiz-options li"
+          );
+          const quizFeedbackEl = document.getElementById("quiz-feedback");
+
+          currentOptions.forEach((option) => {
+            option.addEventListener("click", (e) => {
+              const selectedIndex = parseInt(e.target.dataset.index, 10);
+              userAnswers[currentQuestionIndex] = selectedIndex;
+
+              currentOptions.forEach((opt) =>
+                opt.classList.remove("selected-option")
+              );
+              e.target.classList.add("selected-option");
+
+              if (quizFeedbackEl) {
+                quizFeedbackEl.textContent = ""; // Clear feedback on new selection, score at end
+              }
+            });
+          });
+        }
+
+        function handlePrevQuestion() {
+          if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayQuizQuestion();
+          }
+        }
+
+        function handleNextQuestion() {
+          const totalQuestions = currentLoadedCourse.quizzes.length;
+          if (currentQuestionIndex < totalQuestions - 1) {
+            currentQuestionIndex++;
+            displayQuizQuestion();
+          } else {
+            showQuizResults();
+          }
+        }
+
+        function showQuizResults() {
+          const quizContainer = document.getElementById(
+            "quiz-container-section"
+          );
+          if (
+            !quizContainer ||
+            !currentLoadedCourse ||
+            !currentLoadedCourse.quizzes
+          )
+            return;
+
+          let score = 0;
+          for (let i = 0; i < userAnswers.length; i++) {
+            if (
+              userAnswers[i] !== null &&
+              userAnswers[i] ===
+                currentLoadedCourse.quizzes[i].correctAnswerIndex
+            ) {
+              score++;
+            }
+          }
+          const totalQuestions = currentLoadedCourse.quizzes.length;
+          const percentage =
+            totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+
+          quizContainer.innerHTML = `
+            <h4>Quiz Completed!</h4>
+            <p>You scored ${score} out of ${totalQuestions} (${percentage.toFixed(
+            2
+          )}%).</p>
+            <button class="btn btn-primary" id="retake-quiz-btn">Retake Quiz</button>
+          `;
+          document
+            .getElementById("retake-quiz-btn")
+            .addEventListener("click", () => {
+              currentQuestionIndex = 0;
+              userAnswers = new Array(totalQuestions).fill(null);
+              displayQuizQuestion();
+            });
+        }
+
+        function loadModuleContent(moduleId, courseTitle) {
+          const lessonDisplayArea = document.getElementById(
+            "lesson-display-area"
+          );
+          if (lessonDisplayArea) {
+            // Placeholder: In a real app, you'd fetch module-specific content
+            lessonDisplayArea.innerHTML = `
+                        <h3>Content for Module ${moduleId}</h3>
+                        <p>This is where the lessons, videos, quizzes, and other materials for module ${moduleId} of the course "${courseTitle}" would be displayed. Interactive elements and adaptive content will appear here based on your progress and learning style.</p>
+                        <p>For now, this is a placeholder. Building out the full content delivery system is a next step!</p>
+                        <p>Remember to check the main course content area for video, key takeaways, and quizzes related to the overall course.</p>
+                    `;
+          }
+        }
+
+        fetchCourseDetails(courseId);
+      });
+    </script>
+  </body>
+</html>
